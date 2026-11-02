@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Lyrics Widget</string>
+    <string name="widget_desc">Testo della canzone di Spotify che scorre. Invisibile quando non suona niente.</string>
+</resources>

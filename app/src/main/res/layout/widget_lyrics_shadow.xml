@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible">
+
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg" />
+
+    <ViewFlipper
+        android:id="@+id/flipper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inAnimation="@anim/line_in"
+        android:measureAllChildren="true"
+        android:outAnimation="@anim/line_out"
+        android:paddingStart="14dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/prev0"
+                style="@style/Lyric.Dim.Shadow" />
+
+            <TextView
+                android:id="@+id/cur0"
+                style="@style/Lyric.Current.Shadow" />
+
+            <TextView
+                android:id="@+id/next0"
+                style="@style/Lyric.Dim.Shadow" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/prev1"
+                style="@style/Lyric.Dim.Shadow" />
+
+            <TextView
+                android:id="@+id/cur1"
+                style="@style/Lyric.Current.Shadow" />
+
+            <TextView
+                android:id="@+id/next1"
+                style="@style/Lyric.Dim.Shadow" />
+        </LinearLayout>
+    </ViewFlipper>
+</FrameLayout>

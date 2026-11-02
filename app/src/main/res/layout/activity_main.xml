@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_access"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/access_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:text="Se Android dice «Impostazione con limitazioni»: apri Info app → menu ⋮ in alto a destra → «Consenti impostazioni con limitazioni», poi riprova."
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_app_info"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apri Info app" />
+
+        <Button
+            android:id="@+id/btn_pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Aggiungi widget alla schermata Home" />
+
+        <TextView
+            style="@style/SectionLabel"
+            android:text="Anteprima" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/wallpaper_mock"
+            android:padding="18dp">
+
+            <LinearLayout
+                android:id="@+id/preview_card"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <TextView
+                    android:id="@+id/preview_prev"
+                    style="@style/Lyric.Dim"
+                    android:text="Il testo della canzone" />
+
+                <TextView
+                    android:id="@+id/preview_cur"
+                    style="@style/Lyric.Current"
+                    android:text="scorre a tempo di musica" />
+
+                <TextView
+                    android:id="@+id/preview_next"
+                    style="@style/Lyric.Dim"
+                    android:text="e sparisce quando non suona niente" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/btn_demo"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Prova sul widget vero (6 secondi)" />
+
+        <TextView
+            style="@style/SectionLabel"
+            android:text="Colore sfondo" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/bg_swatches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <EditText
+            android:id="@+id/bg_hex"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:hint="#RRGGBB"
+            android:imeOptions="actionDone"
+            android:inputType="textNoSuggestions|textCapCharacters"
+            android:maxLength="9"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/alpha_label"
+            style="@style/SectionLabel" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_alpha_0"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Trasparente" />
+
+            <Button
+                android:id="@+id/btn_alpha_half"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Semi" />
+
+            <Button
+                android:id="@+id/btn_alpha_full"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Pieno" />
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/alpha_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="255" />
+
+        <TextView
+            style="@style/SectionLabel"
+            android:text="Colore testo" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/text_swatches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <EditText
+            android:id="@+id/text_hex"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:hint="#RRGGBB"
+            android:imeOptions="actionDone"
+            android:inputType="textNoSuggestions|textCapCharacters"
+            android:maxLength="9"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/size_label"
+            style="@style/SectionLabel" />
+
+        <SeekBar
+            android:id="@+id/size_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="20" />
+
+        <TextView
+            style="@style/SectionLabel"
+            android:text="Righe visibili" />
+
+        <RadioGroup
+            android:id="@+id/lines_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/lines_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:text="Solo la riga attuale" />
+
+            <RadioButton
+                android:id="@+id/lines_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 righe" />
+        </RadioGroup>
+
+        <Switch
+            android:id="@+id/switch_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ombra sotto il testo (più leggibile su sfondo trasparente)" />
+
+        <Switch
+            android:id="@+id/switch_plain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Usa anche testi non sincronizzati (tempi stimati)" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:alpha="0.6"
+            android:text="Testi sincronizzati da LRCLIB.net. Il widget legge cosa suona Spotify tramite l'accesso alle notifiche: se Spotify è in pausa, chiuso o la canzone non ha testo, il widget resta invisibile. Tocca il widget per aprire Spotify."
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>
