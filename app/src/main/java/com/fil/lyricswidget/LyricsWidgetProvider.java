@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.service.notification.NotificationListenerService;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -46,6 +47,14 @@ public class LyricsWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
         manager.updateAppWidget(ids, build(context));
+        // Some OEMs (e.g. Realme/Oppo) kill the listener and the system doesn't bring it back.
+        if (LyricsService.instance == null) {
+            try {
+                NotificationListenerService.requestRebind(new ComponentName(context, LyricsService.class));
+            } catch (RuntimeException ignored) {
+                // Notification access not granted.
+            }
+        }
     }
 
     static void showHidden(Context c) {
@@ -145,7 +154,11 @@ public class LyricsWidgetProvider extends AppWidgetProvider {
         fillSlot(rv, IDS[1 - sSlot], sPrevious, color, dim, size, threeLines);
         rv.setDisplayedChild(R.id.flipper, sSlot);
 
-        Intent open = c.getPackageManager().getLaunchIntentForPackage(LyricsService.SPOTIFY);
+        Intent open = null;
+        for (String pkg : LyricsService.SPOTIFY_PACKAGES) {
+            open = c.getPackageManager().getLaunchIntentForPackage(pkg);
+            if (open != null) break;
+        }
         if (open == null) open = new Intent(c, MainActivity.class);
         rv.setOnClickPendingIntent(R.id.root, PendingIntent.getActivity(c, 0, open,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));

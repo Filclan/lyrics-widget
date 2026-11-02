@@ -5,6 +5,7 @@
 
     <queries>
         <package android:name="com.spotify.music" />
+        <package android:name="com.spotify.lite" />
     </queries>
 
     <application

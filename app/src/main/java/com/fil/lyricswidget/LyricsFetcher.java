@@ -33,15 +33,16 @@ final class LyricsFetcher {
 
     private LyricsFetcher() {}
 
-    /** Returns lyrics to show, or null when none were found (or the network failed). */
-    static Lyrics fetch(String title, String artist, String album, long durationMs, boolean allowPlain) {
+    /** Returns lyrics to show, or null when none were found. Network failures throw. */
+    static Lyrics fetch(String title, String artist, String album, long durationMs, boolean allowPlain)
+            throws IOException {
         String key = title + "\u0000" + artist;
         String[] found = CACHE.get(key);
         if (found == null) {
             try {
                 found = lookup(title, artist, album, durationMs);
-            } catch (IOException | JSONException e) {
-                return null;
+            } catch (JSONException e) {
+                found = new String[]{null, null};
             }
             CACHE.put(key, found);
         }

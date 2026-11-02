@@ -19,9 +19,11 @@ import java.util.concurrent.Executors;
  * session, fetches lyrics for the current track and drives the widget line by line.
  */
 public class LyricsService extends NotificationListenerService {
-    static final String SPOTIFY = "com.spotify.music";
+    /** Spotify and Spotify Lite. */
+    static final String[] SPOTIFY_PACKAGES = {"com.spotify.music", "com.spotify.lite"};
     /** Show each line slightly early so the slide animation ends as it is sung. */
     private static final long LOOKAHEAD_MS = 250;
+    private static final long RETRY_MS = 15_000;
 
     static volatile LyricsService instance;
 
@@ -35,6 +37,8 @@ public class LyricsService extends NotificationListenerService {
     private Lyrics lyrics;
     private String lyricsStatus = "";
     private int fetchGeneration;
+    /** Packages of all active media sessions, for the status screen. */
+    private String sessionPackages = "";
 
     private final MediaSessionManager.OnActiveSessionsChangedListener sessionsListener = this::onSessionsChanged;
     private final Runnable tickRunnable = this::tick;
@@ -100,11 +104,15 @@ public class LyricsService extends NotificationListenerService {
 
     private void onSessionsChanged(List<MediaController> controllers) {
         MediaController spotify = null;
+        StringBuilder packages = new StringBuilder();
         if (controllers != null) {
             for (MediaController c : controllers) {
-                if (SPOTIFY.equals(c.getPackageName())) { spotify = c; break; }
+                if (packages.length() > 0) packages.append(", ");
+                packages.append(c.getPackageName());
+                if (spotify == null && isSpotify(c.getPackageName())) spotify = c;
             }
         }
+        sessionPackages = packages.toString();
         if (spotify != null && controller != null
                 && spotify.getSessionToken().equals(controller.getSessionToken())) {
             return;
@@ -156,17 +164,39 @@ public class LyricsService extends NotificationListenerService {
         final boolean allowPlain = Prefs.plainLyrics(this);
         tick();
 
+        fetch(gen, t, a, album, duration, allowPlain);
+    }
+
+    private void fetch(int gen, String t, String a, String album, long duration, boolean allowPlain) {
         executor.execute(() -> {
-            Lyrics result = LyricsFetcher.fetch(t, a, album, duration, allowPlain);
+            Lyrics result;
+            try {
+                result = LyricsFetcher.fetch(t, a, album, duration, allowPlain);
+            } catch (java.io.IOException e) {
+                handler.post(() -> {
+                    if (gen != fetchGeneration) return;
+                    lyricsStatus = "Errore di rete (" + e.getClass().getSimpleName() + ": " + e.getMessage()
+                            + "), riprovo tra 15 s";
+                    handler.postDelayed(() -> {
+                        if (gen == fetchGeneration) fetch(gen, t, a, album, duration, allowPlain);
+                    }, RETRY_MS);
+                });
+                return;
+            }
             handler.post(() -> {
                 if (gen != fetchGeneration) return;
                 lyrics = result;
-                if (result == null) lyricsStatus = "Testo non trovato";
+                if (result == null) lyricsStatus = "Testo non trovato su LRCLIB";
                 else if (result.synced) lyricsStatus = "Testo sincronizzato trovato";
                 else lyricsStatus = "Testo non sincronizzato (tempi stimati)";
                 tick();
             });
         });
+    }
+
+    static boolean isSpotify(String pkg) {
+        for (String p : SPOTIFY_PACKAGES) if (p.equals(pkg)) return true;
+        return false;
     }
 
     private boolean isPlaying(PlaybackState st) {
@@ -201,14 +231,21 @@ public class LyricsService extends NotificationListenerService {
         if (s == null) {
             return "Servizio in avvio… Se resta così, disattiva e riattiva l'accesso alle notifiche.";
         }
-        if (s.controller == null || s.title == null) {
-            return "Spotify non sta riproducendo nulla → widget invisibile.";
+        String sessions = "\nSessioni multimediali attive: "
+                + (s.sessionPackages.isEmpty() ? "nessuna" : s.sessionPackages);
+        if (s.controller == null) {
+            return "Servizio attivo, ma Spotify non risulta aperto → widget invisibile." + sessions;
         }
-        boolean playing = s.isPlaying(s.controller.getPlaybackState());
+        if (s.title == null) {
+            return "Spotify trovato, ma non dice cosa sta suonando → widget invisibile." + sessions;
+        }
+        PlaybackState st = s.controller.getPlaybackState();
+        boolean playing = s.isPlaying(st);
         String track = "«" + s.title + "»" + (s.artist != null ? " – " + s.artist : "");
-        String line = (playing ? "In riproduzione: " : "In pausa: ") + track + "\n" + s.lyricsStatus;
+        String line = (playing ? "In riproduzione: " : "Non in riproduzione (stato " + (st == null ? "?" : st.getState())
+                + "): ") + track + "\n" + s.lyricsStatus;
         if (!playing || s.lyrics == null) line += " → widget invisibile.";
         else line += " → widget visibile.";
-        return line;
+        return line + sessions;
     }
 }
